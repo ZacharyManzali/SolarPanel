@@ -1,0 +1,78 @@
+// Analog to Digital Converter Implementation
+
+// Using MCP3008-I/SL Device
+
+// Need to install library uses SPI to communicate
+
+import os
+import time
+import buio
+import digitalio
+import board
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcpxxx.analog_in import AnalogIn
+
+//Create spi bus
+
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+
+# Chip select Creatuin
+
+cs = digitalio.DigitalInOut(board.D22)
+
+# MCP object
+
+mcp = MCP.MCP3008(spi,cs)
+# V true
+chan0 = AnalogIn(mcp, MCP.P0)
+
+# V used to find I
+chan1 = AnalogIn(mcp, MCP.P1)
+
+last_read = 0
+tolerance = 150
+
+def remap_range(value, left_min, left_max, right_min, right_max)]:
+# maps value old to current value new left and right
+left_span = left_max - left_min
+right_span = right_max - right_min
+
+# convert into right range
+
+valueScaled = int(value - left_min) / int(left(span))
+
+return int(right_min + (valueScaled * right_span))
+
+# actual measurement
+
+While True:
+# Assume voltage didnt change
+voltage_true_change = false
+voltage_shunt_change = false
+
+voltage_true = channel0.value
+voltage_shunt = channel1.value
+
+voltage_true_difference = abs(voltage_true -voltage_true_last_value)
+
+voltage_shunt_difference = abs(voltage_shunt -voltage_shunt_last_value)
+
+
+
+
+
+# Checks if last value change is greater than the tolerance 
+if voltage_true_difference > tolerance
+	# need to figure out conversion to true values
+if voltage_shunt_difference > tolerance
+	# ^^^ same as above
+# Saves last checked voltages for next check
+
+
+voltage_true_last_read = voltage_true
+voltage_shunt_last_read = voltage_shunt
+
+# need to implement a daily array to save this data
+
+# rest time
+time.sleep(180)
