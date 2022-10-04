@@ -76,3 +76,9 @@ voltage_shunt_last_read = voltage_shunt
 
 # rest time
 time.sleep(180)
+
+# output data to store in an array for the day
+ # operating boolean based off time and date
+ # sunlight = true, false
+if sunglight = true:
+	# call module to store daily data and send voltage_true * voltage shunt * scaling factor to know true power
