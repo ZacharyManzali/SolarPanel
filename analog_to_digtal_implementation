@@ -16,19 +16,23 @@ from adafruit_mcpxxx.analog_in import AnalogIn
 
 spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 
-# Chip select Creatuin
+# Chip select Creation
 
 cs = digitalio.DigitalInOut(board.D22)
 
 # MCP object
 
 mcp = MCP.MCP3008(spi,cs)
-# V true
+# Power Measurment
 chan0 = AnalogIn(mcp, MCP.P0)
-
-# V used to find I
+# 4 Photodiode Voltages
+# Read order top left, right, bottom left, right
 chan1 = AnalogIn(mcp, MCP.P1)
+chan2 = AnalogIn(mcp, MCP.P2)
+chan3 = AnalogIn(mcp, MCP.P3)
+chan4 = AnalogIn(mcp, MCP.P4)
 
+return [chan0, chan1, chan2, chan3, chan4]
 last_read = 0
 tolerance = 150
 
@@ -73,12 +77,10 @@ voltage_true_last_read = voltage_true
 voltage_shunt_last_read = voltage_shunt
 
 # need to implement a daily array to save this data
-
-# rest time
-time.sleep(180)
+return 
 
 # output data to store in an array for the day
  # operating boolean based off time and date
  # sunlight = true, false
-if sunglight = true:
+if sunlight = true:
 	# call module to store daily data and send voltage_true * voltage shunt * scaling factor to know true power
