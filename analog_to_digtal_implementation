@@ -26,13 +26,15 @@ mcp = MCP.MCP3008(spi,cs)
 # Power Measurment
 chan0 = AnalogIn(mcp, MCP.P0)
 # 4 Photodiode Voltages
+
+def read_photodiodes()
 # Read order top left, right, bottom left, right
 chan1 = AnalogIn(mcp, MCP.P1)
 chan2 = AnalogIn(mcp, MCP.P2)
 chan3 = AnalogIn(mcp, MCP.P3)
 chan4 = AnalogIn(mcp, MCP.P4)
+return chan1,chan2,chan3,chan4
 
-return [chan0, chan1, chan2, chan3, chan4]
 last_read = 0
 tolerance = 150
 
