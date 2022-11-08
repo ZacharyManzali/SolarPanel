@@ -1,0 +1,102 @@
+import math
+
+#function to determine if a given year is a leap year
+def findLeap(year):
+  if year//4 == 0:
+    if year//100 != 0:
+      return True
+    elif year//400 == 0:
+      return True
+    else:
+      return False
+  else:
+    return False
+
+#function to find the day of the year given a date in MM/DD/YYYY format
+def date2day(date):
+  #dictionary storing number of days passed at the start each month in a normal year
+  monthDaysdict = {"01":0,"02":31,"03":59,"04":90,"05":120,"06":151,"07":181,"08":212,"09":243,"10":273,"11":304,"12":334}
+  #dictionary storing number of days passed at the start each month in a leap year
+  monthDaysdictLeap = {"01":0,"02":31,"03":60,"04":91,"05":121,"06":152,"07":182,"08":213,"09":244,"10":274,"11":305,"12":335}
+  month = date[0:2]
+  day = date[3:5]
+  year = int(date[6:10])
+  if findLeap(year):
+    numday = monthDaysdictLeap[month]
+    numday += int(day)
+  else:
+    numday = monthDaysdict[month]
+    numday += int(day)
+  return numday
+
+#converts an angle in radians to degrees
+def radToDeg(angle):
+  return 360 * angle / (2*math.pi)
+
+#converts an angle in degrees to radians
+def degToRad(angle):
+  return (2*math.pi) * angle / 360
+
+#uses inputs to find the elevation and azimuth angles using equations from NOAA
+def findAngles(latitude, longitude, date, time, tzn):
+  doy = date2day(date)
+  hr = int(time[0:2])
+  mn = int(time[3:5])
+  sc = int(time[6:8])
+  year = int(date[6:10])
+  lat = degToRad(latitude)
+  hour = hr + mn/60 + sc/3600
+  if findLeap(year):
+    gamma = ((2 * math.pi)/366) * (doy - 1 + (hour - 12)/24)
+  else:
+    gamma = ((2 * math.pi)/365) * (doy - 1 + (hour - 12)/24)
+  eqt = 229.18*(0.000075+0.001868*math.cos(gamma) - 0.032077*math.sin(gamma) - 0.014615*math.cos(2*gamma) - 0.040849*math.sin(2*gamma))
+  decl = 0.006918 - 0.399912*math.cos(gamma) + 0.070257*math.sin(gamma) - 0.006758*math.cos(2*gamma) + 0.000907*math.sin(2*gamma) - 0.002697*math.cos(3*gamma) + 0.00148*math.sin(3*gamma)
+  toff = eqt + 4*longitude - 60*tzn
+  tst = (hr*60 + mn + sc/60 + toff)
+  ha = degToRad((tst/4) - 180)
+  zen = math.acos(math.sin(lat)*math.sin(decl) + math.cos(lat)*math.cos(decl)*math.cos(ha))
+  zenith = radToDeg(zen)
+  ele = 90 - zenith
+  az1 = (math.sin(lat)*math.cos(zen) - math.sin(decl))/(math.cos(lat)*math.sin(zen))
+  azimuth = 180 + radToDeg(math.acos(az1))
+  rtrnlst = [ele, azimuth]
+  return rtrnlst
+
+def strokeX(angleList):
+  w = 100
+  h = 628.5
+  d = 145
+  r = 470
+  ele = degToRad(angleList[0])
+  az = degToRad(angleList[1])
+  x = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.cos(az))**2))+((math.sin(ele))**2)))
+  z = math.sqrt((d**2)-(x**2))
+  stroke = math.sqrt(((x-(w/2))**2)+((z+h)**2)) - r
+  return stroke
+
+def strokeY(angleList):
+  w = 100
+  h = 608.1
+  d = 215
+  r = 470
+  ele = degToRad(angleList[0])
+  az = degToRad(angleList[1])
+  y = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.sin(az))**2))+((math.sin(ele))**2)))
+  z = math.sqrt((d**2)-(y**2))
+  stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
+  return stroke
+
+def main():
+  x = findAngles(40.72, -74.02, "12/21/2022", "10:00:00", -4)
+  z = findAngles(40.72, -74.02, "07/21/2022", "13:02:31", -4)
+  y = findAngles(40.72, -74.02, "10/25/2022", "18:01:00", -4)
+  print(x)
+  print(z)
+  print(y)
+  sx = strokeX(x)
+  sy = strokeY(x)
+  print(sx)
+  print(sy)
+
+main()
