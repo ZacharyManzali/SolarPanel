@@ -3,7 +3,19 @@
 import time
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
+import splite3
 
+import pandas as pd
+
+conn = sqlite3.connect('data')
+c = conn.cursor()
+
+# Creating the databases
+c.execute(''' CREATE TABLE IF NOT EXISTS daily_database 
+([count] INTEGER PRIMARY KEY, [power] FLOAT, [azimuth] FLOAT, [elevation] FLOAT, [mode] INTEGER)''')
+
+c.execute(''' CREATE TABLE IF NOT EXISTS full_database
+([count_full] INTEGER PRIMARY KEY, [power] FLOAT, [sunset] TEXT, [sunrise] TEXT)''')
 
 # Load CSV File
 
@@ -38,7 +50,7 @@ if (br > tl) and (br > tr) and (br > bl)
 	move(1, 'rev', t)
 	move(2, 'fwd', t)
 
-def move(num, dir, t)
+def move(num, dir, t):
 	if (num == 1)
 		if (dir == 'fwd')
 		if(dir == 'rev')
