@@ -1,0 +1,47 @@
+# main function to drive solar tracker
+# Import moduesl
+import time
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
+
+
+# Load CSV File
+
+# Sun Vectoring
+
+# Solar Tracking
+
+ [tl, tr, bl, br] = read_photodiodes()
+# actuator on front and right of device.
+# set time to actuate for solar tracking
+t = .10
+ if (tl > bl) and (tl > br) and (tr > bl) and (tr > br)
+ 	move(1, 'fwd', t)
+ if (bl > tl) and (bl > tr) and (br > tl) and (br > tr)
+ 	move(1, 'rev', t)
+
+if (tr > tl) and (tr > bl) and (br > tl) and (br > bl)
+	move(2, 'fwd', t)
+if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl)
+	move(2, 'rev', t)
+# Diagonal Conditions
+if (tr > tl) and (tr > bl) and (tr > br)
+	move(1, 'fwd', t)
+	move(2, 'fwd', t)
+if (tl > tr) and (tl > bl) and (tl > br)
+	move(1, 'fwd', t)
+	move(2, 'rev', t)
+if (bl > tr) and (bl > tl) and (bl > br)
+	move(1, 'rev', t)
+	move(2, 'rev', t)
+if (br > tl) and (br > tr) and (br > bl)
+	move(1, 'rev', t)
+	move(2, 'fwd', t)
+
+def move(num, dir, t)
+	if (num == 1)
+		if (dir == 'fwd')
+		if(dir == 'rev')
+	if (num == 2)
+		if (dir == 'fwd')
+		if(dir == 'rev')
