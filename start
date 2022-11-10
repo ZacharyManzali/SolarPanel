@@ -13,7 +13,7 @@ c = conn.cursor()
 # Creating the databases
 # Solar Vectoring is mode 0 and Solar Tracking is mode 1
 c.execute(''' CREATE TABLE IF NOT EXISTS daily_database 
-([count] INTEGER PRIMARY KEY, [power] FLOAT, [azm] FLOAT, [elv] FLOAT, [mode] INTEGER)''')
+([count] INTEGER PRIMARY KEY, [power] FLOAT, [xStroke] FLOAT, [yStroke] FLOAT, [mode] INTEGER)''')
 
 c.execute(''' CREATE TABLE IF NOT EXISTS full_database
 ([count_full] INTEGER PRIMARY KEY, [power] FLOAT, [sunset] TEXT, [sunrise] TEXT)''')
