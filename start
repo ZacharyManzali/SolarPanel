@@ -1,24 +1,21 @@
-# main function to drive solar tracker
-# Import moduesl
+#Import libraries
 import time
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 import splite3
 
-import pandas as pd
-
-conn = sqlite3.connect('data')
-c = conn.cursor()
+# main function to drive solar tracker
+# Import moduesl
+ 
 
 # Creating the databases
-# Solar Vectoring is mode 0 and Solar Tracking is mode 1
-c.execute(''' CREATE TABLE IF NOT EXISTS daily_database 
-([count] INTEGER PRIMARY KEY, [power] FLOAT, [xStroke] FLOAT, [yStroke] FLOAT, [mode] INTEGER)''')
+# Solar Vectoring is mode 0 and Solar Tracking is mode 1 when using both is mode 2
+# For calling functions in database daily database is assigned a value of 0 while full database is assigned a value of 1
+# Calling functions in database import will be (which database, type of information stored, information)
+# addToDatabaseInt
+# addToDatabaseFloat
+# addToDatabaseString
 
-c.execute(''' CREATE TABLE IF NOT EXISTS full_database
-([count_full] INTEGER PRIMARY KEY, [power] FLOAT, [sunset] TEXT, [sunrise] TEXT)''')
-
-conn.commit()
 
 # Load CSV File
 
