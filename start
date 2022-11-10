@@ -50,10 +50,10 @@ if (br > tl) and (br > tr) and (br > bl)
 	move(1, 'rev', t)
 	move(2, 'fwd', t)
 
-def move(num, dir, t):
-	if (num == 1)
+def move(actNum, dir, t):
+	if (actNum == 1)
 		if (dir == 'fwd')
 		if(dir == 'rev')
-	if (num == 2)
+	if (actNum == 2)
 		if (dir == 'fwd')
 		if(dir == 'rev')
