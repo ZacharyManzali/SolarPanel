@@ -87,16 +87,3 @@ def strokeY(angleList):
   stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
   return stroke
 
-def main():
-  x = findAngles(40.72, -74.02, "12/21/2022", "10:00:00", -4)
-  z = findAngles(40.72, -74.02, "07/21/2022", "13:02:31", -4)
-  y = findAngles(40.72, -74.02, "10/25/2022", "18:01:00", -4)
-  print(x)
-  print(z)
-  print(y)
-  sx = strokeX(x)
-  sy = strokeY(x)
-  print(sx)
-  print(sy)
-
-main()
