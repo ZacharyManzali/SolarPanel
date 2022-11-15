@@ -6,6 +6,7 @@ import splite3
 
 # main function to drive solar tracker
 # Import moduesl
+import database as database
  
 
 # Creating the databases
