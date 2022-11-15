@@ -24,19 +24,30 @@ database.createDatabase()
 
 # Load CSV File
 
+for line in DB:
+	line[xStroke] = strokeX(line[latitude], line[longitude], line[date], line[time], line[tzn])
+	line[yStroke] = strokeX(line[latitude], line[longitude], line[date], line[time], line[tzn])
+
+def initAct():
+	move(1, 'rev', 40)
+	move(2, 'rev', 40)
+		
+
 # Sun Vectoring
+initAct() 
+curXStroke = 0
+curYStroke = 0
 while(mode == 0):
-	curXStroke = ??
-	curYStroke = ??
-	if (#time to move#):
+	curTime = # get time from pi #
+	if (# curTime >==10:00 AM and curMinutes % 5 == 0 #):
 		newXStroke = #get value from DB for current time
 		newYStroke = #get value from DB for current time
-		if (curXStroke <= newXStroke):
+		if (curXStroke < newXStroke):
 			move(1, 'fwd', (newXStroke-curXStroke)/10)
 		else:
 			move(1, 'rev', (curXStroke-newXStroke)/10)
 		curXStroke = newXStroke
-		if (curYStroke <= yStroke):
+		if (curYStroke < yStroke):
 			move(2, 'fwd', (newYStroke-curYStroke)/10)
 		else:
 			move(2, 'rev', (curYStroke-newYStroke)/10)
