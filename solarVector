@@ -63,8 +63,9 @@ def findAngles(latitude, longitude, date, time, tzn):
   rtrnlst = [ele, azimuth]
   return rtrnlst
 
-def strokeX(angleList):
-  w = 100
+def strokeX(latitude, longitude, date, time, tzn):
+  angleList = findAngles(latitude, longitude, date, time, tzn)
+  w = 88.9
   h = 628.5
   d = 145
   r = 470
@@ -75,8 +76,9 @@ def strokeX(angleList):
   stroke = math.sqrt(((x-(w/2))**2)+((z+h)**2)) - r
   return stroke
 
-def strokeY(angleList):
-  w = 100
+def strokeY(latitude, longitude, date, time, tzn):
+  angleList = findAngles(latitude, longitude, date, time, tzn)
+  w = 88.9
   h = 608.1
   d = 215
   r = 470
@@ -86,4 +88,3 @@ def strokeY(angleList):
   z = math.sqrt((d**2)-(y**2))
   stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
   return stroke
-
