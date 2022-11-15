@@ -3,11 +3,13 @@ import time
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 import splite3
+import time
 
 # main function to drive solar tracker
 # Import moduesl
-import database as database
- 
+import database
+import solarVector
+
 
 # Creating the databases
 # Solar Vectoring is mode 0 and Solar Tracking is mode 1 when using both is mode 2
@@ -16,6 +18,8 @@ import database as database
 # addToDatabaseInt
 # addToDatabaseFloat
 # addToDatabaseString
+
+database.createDatabase()
 
 
 # Load CSV File
@@ -37,39 +41,45 @@ while(mode == 0):
 		else:
 			move(2, 'rev', (curYStroke-newYStroke)/10)
 		curYStroke = newYStroke
+
 # Solar Tracking
 
- [tl, tr, bl, br] = read_photodiodes()
+# Check back later
+#  [tl, tr, bl, br] = read_photodiodes()
 # actuator on front and right of device.
 # set time to actuate for solar tracking
 t = .10
- if (tl > bl) and (tl > br) and (tr > bl) and (tr > br)
- 	move(1, 'fwd', t)
- if (bl > tl) and (bl > tr) and (br > tl) and (br > tr)
- 	move(1, 'rev', t)
+if (tl > bl) and (tl > br) and (tr > bl) and (tr > br):
+	move(1, 'fwd', t)
+if (bl > tl) and (bl > tr) and (br > tl) and (br > tr):
+	move(1, 'rev', t)
 
-if (tr > tl) and (tr > bl) and (br > tl) and (br > bl)
+if (tr > tl) and (tr > bl) and (br > tl) and (br > bl):
 	move(2, 'fwd', t)
-if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl)
+if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl):
 	move(2, 'rev', t)
 # Diagonal Conditions
-if (tr > tl) and (tr > bl) and (tr > br)
+if (tr > tl) and (tr > bl) and (tr > br):
 	move(1, 'fwd', t)
 	move(2, 'fwd', t)
-if (tl > tr) and (tl > bl) and (tl > br)
+if (tl > tr) and (tl > bl) and (tl > br):
 	move(1, 'fwd', t)
 	move(2, 'rev', t)
-if (bl > tr) and (bl > tl) and (bl > br)
+if (bl > tr) and (bl > tl) and (bl > br):
 	move(1, 'rev', t)
 	move(2, 'rev', t)
-if (br > tl) and (br > tr) and (br > bl)
+if (br > tl) and (br > tr) and (br > bl):
 	move(1, 'rev', t)
 	move(2, 'fwd', t)
 
 def move(actNum, dir, t):
-	if (actNum == 1)
-		if (dir == 'fwd')
-		if(dir == 'rev')
-	if (actNum == 2)
-		if (dir == 'fwd')
-		if(dir == 'rev')
+	if (actNum == 1):
+		if (dir == 'fwd'):
+
+		if (dir == 'rev'):
+
+	if (actNum == 2):
+		if (dir == 'fwd'):
+
+		if(dir == 'rev'):
+
