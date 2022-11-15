@@ -21,6 +21,22 @@ import database as database
 # Load CSV File
 
 # Sun Vectoring
+while(mode == 0):
+	curXStroke = ??
+	curYStroke = ??
+	if (#time to move#):
+		newXStroke = #get value from DB for current time
+		newYStroke = #get value from DB for current time
+		if (curXStroke <= newXStroke):
+			move(1, 'fwd', (newXStroke-curXStroke)/10)
+		else:
+			move(1, 'rev', (curXStroke-newXStroke)/10)
+		curXStroke = newXStroke
+		if (curYStroke <= yStroke):
+			move(2, 'fwd', (newYStroke-curYStroke)/10)
+		else:
+			move(2, 'rev', (curYStroke-newYStroke)/10)
+		curYStroke = newYStroke
 
 # Solar Tracking
 
