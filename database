@@ -22,7 +22,7 @@ def addToDaily(power, xStroke, yStroke, mode, time):
   conn.close()
 def addToFull(power, sunrise, sunset):
   c.execute("""
-          INSERT INTO dailyDatabase VALUES(
+          INSERT INTO fullDatabase VALUES(
           """ + power + """, 
           """ + sunrise + """,
           """ + sunset + """
