@@ -47,8 +47,8 @@ now = datetime.now()
 
 curTime = now.strftime("%H:%M")
 
-curHours = now strftime("%H")
-curMinutes = nowstrftime("%M")
+curHours = int(now.strftime("%H"))
+curMinutes = int(now.strftime("%M"))
 
 for line in DB:
 	line[xStroke] = strokeX(line[latitude], line[longitude], line[date], line[time], line[tzn])
@@ -66,7 +66,7 @@ curXStroke = 0
 curYStroke = 0
 while(mode == 0):
 #	curTime =  get time from pi 
-	if (# curTime >==10:00 AM and curMinutes % 5 == 0 #):
+	if (curHours >== 10 and curMinutes % 5 == 0):
 		newXStroke = #get value from DB for current time
 		newYStroke = #get value from DB for current time
 		if (curXStroke < newXStroke):
