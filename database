@@ -20,12 +20,13 @@ def addToDaily(power, xStroke, yStroke, mode, time):
   conn.commit()
   
   conn.close()
-def addToFull(power, sunrise, sunset):
+def addToFull(power, sunrise, sunset, date):
   c.execute("""
           INSERT INTO fullDatabase VALUES(
           """ + power + """, 
           """ + sunrise + """,
-          """ + sunset + """
+          """ + sunset + """,
+          """ + date + """
           )""")
   conn.commit()
   
