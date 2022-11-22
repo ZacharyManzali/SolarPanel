@@ -1,14 +1,23 @@
 #Import libraries
 from datetime import datetime
+from datetime import date
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 import sqlite3
 
 # main function to drive solar tracker
 # Import moduesl
-import database
-import solarVector
+from database.py import Database
+from solarVector.py import solarVector
+from .SolarPanel import analog_to_digital_implementation
 
+# Values from UI
+
+longitude = 40.79
+
+latitude = -77.6
+
+tzn = -5
 
 # Creating the databases
 # Solar Vectoring is mode 0 and Solar Tracking is mode 1 when using both is mode 2
@@ -23,7 +32,6 @@ c = conn.cursor()
 
 c.execute(""" 
           CREATE TABLE dailyDatabase(
-          power real, 
           xStroke real, 
           yStroke real, 
           mode integer, 
@@ -36,23 +44,29 @@ c.execute("""
           power real, 
           sunrise text, 
           sunset text,
-	  date text
+	  	  date text
           )""")
 
 conn.commit()
-
-# Initiating date and time
-
 now = datetime.now()
+curDate = date.today()
+fakeHour = 10
+fakeMin = 0
+i = 0
+fakeTime = ""
 
-curTime = now.strftime("%H:%M")
-
-curHours = int(now.strftime("%H"))
-curMinutes = int(now.strftime("%M"))
-
-for line in DB:
-	line[xStroke] = strokeX(line[latitude], line[longitude], line[date], line[time], line[tzn])
-	line[yStroke] = strokeX(line[latitude], line[longitude], line[date], line[time], line[tzn])
+while i < 72:
+    if fakeMin < 10:
+        fakeTime = str(fakeHour) + ":0" + str(fakeMin) + ":00"
+    elif fakeMin >= 10: 
+        fakeTime = str(fakeHour) + ":" + str(fakeMin) + ":00"
+    if fakeMin == 55:
+        fakeMin = 0
+        fakeHour += 1
+    else:
+        fakeMin += 5
+    i += 1
+    addToDaily(strokeX(latitude, longitude, curDate, fakeTime, tzn), strokeX(latitude, longitude, curDate, fakeTime, tzn), 0, fakeTime)
 
 def initAct():
 	move(1, 'rev', 40)
@@ -65,10 +79,18 @@ initAct()
 curXStroke = 0
 curYStroke = 0
 while(mode == 0):
-#	curTime =  get time from pi 
-	if (curHours >== 10 and curMinutes % 5 == 0):
-		newXStroke = #get value from DB for current time
-		newYStroke = #get value from DB for current time
+	# Initiating date and time
+
+	now = datetime.now()
+	curDate = date.today()
+
+	curTime = now.strftime("%H:%M:%S")
+	curHours = int(now.strftime("%H"))
+	curMinutes = int(now.strftime("%M"))
+	c.execute("SELECT * FROM dailyDatabase WHERE time = " + curTime)
+	if (curHours >= 8 and curMinutes % 5 == 0 and curHours <= 16):
+		newXStroke = c.fetchone()[0]
+		newYStroke = c.fetchone()[1]
 		if (curXStroke < newXStroke):
 			move(1, 'fwd', (newXStroke-curXStroke)/10)
 		else:
@@ -110,14 +132,21 @@ if (br > tl) and (br > tr) and (br > bl):
 	move(1, 'rev', t)
 	move(2, 'fwd', t)
 
-def move(actNum, dir, t):
-	if (actNum == 1):
-		if (dir == 'fwd'):
+# def move(actNum, dir, t):
+# 	if (actNum == 1):
+# 		if (dir == 'fwd'):
 
-		if (dir == 'rev'):
+# 		if (dir == 'rev'):
 
-	if (actNum == 2):
-		if (dir == 'fwd'):
+# 	if (actNum == 2):
+# 		if (dir == 'fwd'):
 
-		if(dir == 'rev'):
+# 		if(dir == 'rev'):
 
+# Deleting the daily table
+
+c.execute("DROP TABLE dailyDatabase")
+
+conn.commit()
+
+conn.close()
