@@ -1,15 +1,28 @@
 #Import libraries
 from datetime import datetime
-from datetime import date
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
+# import RPi.GPIO as GPIO
+# GPIO.setmode(GPIO.BOARD)
 import sqlite3
 
 # main function to drive solar tracker
 # Import moduesl
-from database.py import Database
-from solarVector.py import solarVector
-from .SolarPanel import analog_to_digital_implementation
+from database import Database
+from solarVector import solarVector
+
+dataClass = Database()
+svClass = solarVector()
+
+def move(actNum, dir, t):
+	if (actNum == 1):
+		if (dir == 'fwd'):
+			print("X fwd")
+		if (dir == 'rev'):
+			print("X rev")
+	if (actNum == 2):
+		if (dir == 'fwd'):
+			print("Y fwd")
+		if(dir == 'rev'):
+			print("Y rev")
 
 # Values from UI
 
@@ -21,17 +34,12 @@ tzn = -5
 
 # Creating the databases
 # Solar Vectoring is mode 0 and Solar Tracking is mode 1 when using both is mode 2
-# For calling functions in database daily database is assigned a value of 0 while full database is assigned a value of 1
-# Calling functions in database import will be (which database, type of information stored, information)
-# addToDatabaseInt
-# addToDatabaseFloat
-# addToDatabaseString
 
 conn = sqlite3.connect('data')
 c = conn.cursor()
 
 c.execute(""" 
-          CREATE TABLE dailyDatabase(
+          CREATE TABLE IF NOT EXISTS dailyDatabase(
           xStroke real, 
           yStroke real, 
           mode integer, 
@@ -40,7 +48,7 @@ c.execute("""
 conn.commit()
 
 c.execute(""" 
-          CREATE TABLE fullDatabase(
+          CREATE TABLE IF NOT EXISTS fullDatabase(
           power real, 
           sunrise text, 
           sunset text,
@@ -48,45 +56,41 @@ c.execute("""
           )""")
 
 conn.commit()
-now = datetime.now()
-curDate = date.today()
+
+curDate = datetime.today()
 fakeHour = 10
 fakeMin = 0
 i = 0
 fakeTime = ""
 
 while i < 72:
-    if fakeMin < 10:
-        fakeTime = str(fakeHour) + ":0" + str(fakeMin) + ":00"
-    elif fakeMin >= 10: 
-        fakeTime = str(fakeHour) + ":" + str(fakeMin) + ":00"
-    if fakeMin == 55:
-        fakeMin = 0
-        fakeHour += 1
-    else:
-        fakeMin += 5
-    i += 1
-    addToDaily(strokeX(latitude, longitude, curDate, fakeTime, tzn), strokeX(latitude, longitude, curDate, fakeTime, tzn), 0, fakeTime)
+	if fakeMin < 10:
+		fakeTime = str(fakeHour) + ":0" + str(fakeMin) + ":00"
+	else: 
+		fakeTime = str(fakeHour) + ":" + str(fakeMin) + ":00"
+	if fakeMin == 55:
+		fakeMin = 0
+		fakeHour += 1
+	else:
+		fakeMin += 5
+	i += 1
+	dataClass.addToDaily(svClass.strokeX(latitude, longitude, curDate, fakeTime, tzn), svClass.strokeY(latitude, longitude, curDate, fakeTime, tzn), 0, fakeTime)
 
 def initAct():
 	move(1, 'rev', 40)
 	move(2, 'rev', 40)
 
 
-
 # Sun Vectoring
 initAct() 
 curXStroke = 0
 curYStroke = 0
+mode = 0
 while(mode == 0):
-	# Initiating date and time
-
-	now = datetime.now()
-	curDate = date.today()
-
-	curTime = now.strftime("%H:%M:%S")
-	curHours = int(now.strftime("%H"))
-	curMinutes = int(now.strftime("%M"))
+	# Initiating date and time	
+	curTime = curDate.strftime("%H:%M:%S")
+	curHours = int(curDate.strftime("%H"))
+	curMinutes = int(curDate.strftime("%M"))
 	c.execute("SELECT * FROM dailyDatabase WHERE time = " + curTime)
 	if (curHours >= 8 and curMinutes % 5 == 0 and curHours <= 16):
 		newXStroke = c.fetchone()[0]
@@ -96,7 +100,7 @@ while(mode == 0):
 		else:
 			move(1, 'rev', (curXStroke-newXStroke)/10)
 		curXStroke = newXStroke
-		if (curYStroke < yStroke):
+		if (curYStroke < newYStroke):
 			move(2, 'fwd', (newYStroke-curYStroke)/10)
 		else:
 			move(2, 'rev', (curYStroke-newYStroke)/10)
@@ -108,40 +112,31 @@ while(mode == 0):
 #  [tl, tr, bl, br] = read_photodiodes()
 # actuator on front and right of device.
 # set time to actuate for solar tracking
-t = .10
-if (tl > bl) and (tl > br) and (tr > bl) and (tr > br):
-	move(1, 'fwd', t)
-if (bl > tl) and (bl > tr) and (br > tl) and (br > tr):
-	move(1, 'rev', t)
+# t = .10
+# if (tl > bl) and (tl > br) and (tr > bl) and (tr > br):
+# 	move(1, 'fwd', t)
+# if (bl > tl) and (bl > tr) and (br > tl) and (br > tr):
+# 	move(1, 'rev', t)
 
-if (tr > tl) and (tr > bl) and (br > tl) and (br > bl):
-	move(2, 'fwd', t)
-if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl):
-	move(2, 'rev', t)
-# Diagonal Conditions
-if (tr > tl) and (tr > bl) and (tr > br):
-	move(1, 'fwd', t)
-	move(2, 'fwd', t)
-if (tl > tr) and (tl > bl) and (tl > br):
-	move(1, 'fwd', t)
-	move(2, 'rev', t)
-if (bl > tr) and (bl > tl) and (bl > br):
-	move(1, 'rev', t)
-	move(2, 'rev', t)
-if (br > tl) and (br > tr) and (br > bl):
-	move(1, 'rev', t)
-	move(2, 'fwd', t)
+# if (tr > tl) and (tr > bl) and (br > tl) and (br > bl):
+# 	move(2, 'fwd', t)
+# if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl):
+# 	move(2, 'rev', t)
+# # Diagonal Conditions
+# if (tr > tl) and (tr > bl) and (tr > br):
+# 	move(1, 'fwd', t)
+# 	move(2, 'fwd', t)
+# if (tl > tr) and (tl > bl) and (tl > br):
+# 	move(1, 'fwd', t)
+# 	move(2, 'rev', t)
+# if (bl > tr) and (bl > tl) and (bl > br):
+# 	move(1, 'rev', t)
+# 	move(2, 'rev', t)
+# if (br > tl) and (br > tr) and (br > bl):
+# 	move(1, 'rev', t)
+# 	move(2, 'fwd', t)
 
-# def move(actNum, dir, t):
-# 	if (actNum == 1):
-# 		if (dir == 'fwd'):
 
-# 		if (dir == 'rev'):
-
-# 	if (actNum == 2):
-# 		if (dir == 'fwd'):
-
-# 		if(dir == 'rev'):
 
 # Deleting the daily table
 
