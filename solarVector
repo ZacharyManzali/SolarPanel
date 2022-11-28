@@ -2,15 +2,15 @@ import math
 
 #function to determine if a given year is a leap year
 def findLeap(year):
-  if year//4 == 0:
-    if year//100 != 0:
-      return True
-    elif year//400 == 0:
-      return True
+    if year//4 == 0:
+      if year//100 != 0:
+        return True
+      elif year//400 == 0:
+        return True
+      else:
+        return False
     else:
       return False
-  else:
-    return False
 
 #function to find the day of the year given a date in MM/DD/YYYY format
 def date2day(date):
@@ -28,7 +28,6 @@ def date2day(date):
     numday = monthDaysdict[month]
     numday += int(day)
   return numday
-
 #converts an angle in radians to degrees
 def radToDeg(angle):
   return 360 * angle / (2*math.pi)
@@ -36,7 +35,6 @@ def radToDeg(angle):
 #converts an angle in degrees to radians
 def degToRad(angle):
   return (2*math.pi) * angle / 360
-
 #uses inputs to find the elevation and azimuth angles using equations from NOAA
 def findAngles(latitude, longitude, date, time, tzn):
   doy = date2day(date)
@@ -63,28 +61,29 @@ def findAngles(latitude, longitude, date, time, tzn):
   rtrnlst = [ele, azimuth]
   return rtrnlst
 
-def strokeX(latitude, longitude, date, time, tzn):
-  angleList = findAngles(latitude, longitude, date, time, tzn)
-  w = 88.9
-  h = 628.5
-  d = 145
-  r = 470
-  ele = degToRad(angleList[0])
-  az = degToRad(angleList[1])
-  x = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.cos(az))**2))+((math.sin(ele))**2)))
-  z = math.sqrt((d**2)-(x**2))
-  stroke = math.sqrt(((x-(w/2))**2)+((z+h)**2)) - r
-  return stroke
+class solarVector(object):
+  def strokeX(self, latitude, longitude, date, time, tzn):
+    angleList = findAngles(latitude, longitude, date, time, tzn)
+    w = 88.9
+    h = 628.5
+    d = 145
+    r = 470
+    ele = degToRad(angleList[0])
+    az = degToRad(angleList[1])
+    x = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.cos(az))**2))+((math.sin(ele))**2)))
+    z = math.sqrt((d**2)-(x**2))
+    stroke = math.sqrt(((x-(w/2))**2)+((z+h)**2)) - r
+    return stroke
 
-def strokeY(latitude, longitude, date, time, tzn):
-  angleList = findAngles(latitude, longitude, date, time, tzn)
-  w = 88.9
-  h = 608.1
-  d = 215
-  r = 470
-  ele = degToRad(angleList[0])
-  az = degToRad(angleList[1])
-  y = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.sin(az))**2))+((math.sin(ele))**2)))
-  z = math.sqrt((d**2)-(y**2))
-  stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
-  return stroke
+  def strokeY(self, latitude, longitude, date, time, tzn):
+    angleList = findAngles(latitude, longitude, date, time, tzn)
+    w = 88.9
+    h = 608.1
+    d = 215
+    r = 470
+    ele = degToRad(angleList[0])
+    az = degToRad(angleList[1])
+    y = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.sin(az))**2))+((math.sin(ele))**2)))
+    z = math.sqrt((d**2)-(y**2))
+    stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
+    return stroke
