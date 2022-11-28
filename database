@@ -1,35 +1,29 @@
 import sqlite3
 
-#initiate database
+class Database(object):   
+      # functions to add to the datbase
+      def addToDaily(self, xStroke, yStroke, mode, time):
+            conn = sqlite3.connect('data')
+            c = conn.cursor()
+            c.execute("""
+                  INSERT INTO dailyDatabase VALUES(
+                  """ + xStroke + """,
+                  """ + yStroke + """,
+                  """ + mode + """,
+                  """ + time + """
+                  )""")
+            conn.commit()
+            conn.close()
 
-conn = sqlite3.connect('data')
-c = conn.cursor()
-
-
-
-# functions to add to the datbase
-def addToDaily(power, xStroke, yStroke, mode, time):
-  c.execute("""
-          INSERT INTO dailyDatabase VALUES(
-          """ + power + """, 
-          """ + xStroke + """,
-          """ + yStroke + """,
-          """ + mode + """,
-          """ + time + """
-          )""")
-  conn.commit()
-  
-  conn.close()
-def addToFull(power, sunrise, sunset, date):
-  c.execute("""
-          INSERT INTO fullDatabase VALUES(
-          """ + power + """, 
-          """ + sunrise + """,
-          """ + sunset + """,
-          """ + date + """
-          )""")
-  conn.commit()
-  
-  conn.close()
-
-
+      def addToFull(self, power, sunrise, sunset, date):
+            conn = sqlite3.connect('data')
+            c = conn.cursor()
+            c.execute("""
+            INSERT INTO fullDatabase VALUES(
+            """ + power + """, 
+            """ + sunrise + """,
+            """ + sunset + """,
+            """ + date + """
+            )""")
+            conn.commit()
+            conn.close()
