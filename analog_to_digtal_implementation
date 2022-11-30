@@ -1,88 +1,92 @@
-// Analog to Digital Converter Implementation
+# Analog to Digital Converter Implementation
+#  Using MCP3008-I/SL Device
 
-// Using MCP3008-I/SL Device
-
-// Need to install library uses SPI to communicate
+#  Need to install library uses SPI to communicate
 
 import os
 import time
-import buio
+import busio
 import digitalio
 import board
 import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcpxxx.analog_in import AnalogIn
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
-//Create spi bus
+class analogToDig():
+	# Create spi bus
+	import adafruit_mcp3xxx.mcp3008 as MCP
+	from adafruit_mcp3xxx.analog_in import AnalogIn
 
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+	spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 
-# Chip select Creation
+	# Chip select Creation
 
-cs = digitalio.DigitalInOut(board.D22)
+	cs = digitalio.DigitalInOut(board.D22)
+	mcp = MCP.MCP3008(spi,cs)
+	
+	# Power Measurment
+	chan0 = AnalogIn(mcp, MCP.P0)
+	# 4 Photodiode Voltages
 
-# MCP object
+	def read_photodiodes(self):
+		# MCP object
+		spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+		cs = digitalio.DigitalInOut(board.D22)
+		mcp = MCP.MCP3008(spi,cs)
+		# Read order top left, right, bottom left, right
+		chan1 = AnalogIn(mcp, MCP.P1)
+		chan2 = AnalogIn(mcp, MCP.P2)
+		chan3 = AnalogIn(mcp, MCP.P3)
+		chan4 = AnalogIn(mcp, MCP.P4)
+		return chan1,chan2,chan3,chan4
 
-mcp = MCP.MCP3008(spi,cs)
-# Power Measurment
-chan0 = AnalogIn(mcp, MCP.P0)
-# 4 Photodiode Voltages
+	last_read = 0
+	tolerance = 150
 
-def read_photodiodes()
-# Read order top left, right, bottom left, right
-chan1 = AnalogIn(mcp, MCP.P1)
-chan2 = AnalogIn(mcp, MCP.P2)
-chan3 = AnalogIn(mcp, MCP.P3)
-chan4 = AnalogIn(mcp, MCP.P4)
-return chan1,chan2,chan3,chan4
+	def remap_range(self, value, left_min, left_max, right_min, right_max):
+		# maps value old to current value new left and right
+		left_span = left_max - left_min
+		right_span = right_max - right_min
 
-last_read = 0
-tolerance = 150
+		# convert into right range
 
-def remap_range(value, left_min, left_max, right_min, right_max)]:
-# maps value old to current value new left and right
-left_span = left_max - left_min
-right_span = right_max - right_min
+		valueScaled = int(value - left_min) / int(left_span)
 
-# convert into right range
+		return int(right_min + (valueScaled * right_span))
 
-valueScaled = int(value - left_min) / int(left(span))
+	# actual measurement
 
-return int(right_min + (valueScaled * right_span))
+	# while True:
+	# 	# Assume voltage didnt change
+	# 	voltage_true_change = false
+	# 	voltage_shunt_change = false
 
-# actual measurement
+	# 	voltage_true = channel0.value
+	# 	voltage_shunt = channel1.value
 
-While True:
-# Assume voltage didnt change
-voltage_true_change = false
-voltage_shunt_change = false
+	# 	voltage_true_difference = abs(voltage_true -voltage_true_last_value)
 
-voltage_true = channel0.value
-voltage_shunt = channel1.value
-
-voltage_true_difference = abs(voltage_true -voltage_true_last_value)
-
-voltage_shunt_difference = abs(voltage_shunt -voltage_shunt_last_value)
-
-
-
-
-
-# Checks if last value change is greater than the tolerance 
-if voltage_true_difference > tolerance
-	# need to figure out conversion to true values
-if voltage_shunt_difference > tolerance
-	# ^^^ same as above
-# Saves last checked voltages for next check
+	# 	voltage_shunt_difference = abs(voltage_shunt -voltage_shunt_last_value)
 
 
-voltage_true_last_read = voltage_true
-voltage_shunt_last_read = voltage_shunt
 
-# need to implement a daily array to save this data
-return 
 
-# output data to store in an array for the day
- # operating boolean based off time and date
- # sunlight = true, false
-if sunlight = true:
-	# call module to store daily data and send voltage_true * voltage shunt * scaling factor to know true power
+
+	# Checks if last value change is greater than the tolerance 
+	# if voltage_true_difference > tolerance
+	# 	# need to figure out conversion to true values
+	# if voltage_shunt_difference > tolerance
+		# ^^^ same as above
+	# Saves last checked voltages for next check
+
+
+	# voltage_true_last_read = voltage_true
+	# voltage_shunt_last_read = voltage_shunt
+
+	# need to implement a daily array to save this data
+	# return 
+
+	# output data to store in an array for the day
+	# operating boolean based off time and date
+	# sunlight = true, false
+	# if sunlight = true:
+		# call module to store daily data and send voltage_true * voltage shunt * scaling factor to know true power
