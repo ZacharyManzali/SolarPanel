@@ -1,13 +1,21 @@
 #Import libraries
 from datetime import datetime
-# import RPi.GPIO as GPIO
-# GPIO.setmode(GPIO.BOARD)
+import os
+import time
+import busio
+import digitalio
+import board
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
 import sqlite3
 
 # main function to drive solar tracker
 # Import moduesl
 from database import Database
 from solarVector import solarVector
+from analog_to_digital_implementation import analogToDig
 
 dataClass = Database()
 svClass = solarVector()
@@ -42,7 +50,6 @@ def move(actNum, dir, t):
 			time.sleep(t)
 			GPIO.output(18, GPIO.LOW)
 			print( "Actuator 2 " + str(t * 10) + " mm rev")
-
 
 # Values from UI
 
@@ -85,16 +92,17 @@ fakeTime = ""
 
 while i < 72:
 	if fakeMin < 10:
-		fakeTime = str(fakeHour) + ":0" + str(fakeMin) + ":00"
+		fakeTime = str(fakeHour) + ":0" + str(fakeMin)
 	else: 
-		fakeTime = str(fakeHour) + ":" + str(fakeMin) + ":00"
+		fakeTime = str(fakeHour) + ":" + str(fakeMin)
 	if fakeMin == 55:
 		fakeMin = 0
 		fakeHour += 1
 	else:
 		fakeMin += 5
 	i += 1
-	dataClass.addToDaily(svClass.strokeX(latitude, longitude, curDate, fakeTime, tzn), svClass.strokeY(latitude, longitude, curDate, fakeTime, tzn), 0, fakeTime)
+	dataClass.addToDaily(str(svClass.strokeX(latitude, longitude, curDate, fakeTime, tzn)), str(svClass.strokeY(latitude, longitude, "11/30/2022", fakeTime, tzn)), str(0), fakeTime)
+
 
 def initAct():
 	move(1, 'rev', 40)
@@ -106,13 +114,16 @@ initAct()
 curXStroke = 0
 curYStroke = 0
 mode = 0
-while(mode == 0):
+curTime = curDate.strftime("%H:%M")
+curHours = int(curDate.strftime("%H"))
+curMinutes = int(curDate.strftime("%M"))
+while(curHours >= 8 and curHours <= 16):
 	# Initiating date and time	
-	curTime = curDate.strftime("%H:%M:%S")
+	curTime = curDate.strftime("%H:%M")
 	curHours = int(curDate.strftime("%H"))
 	curMinutes = int(curDate.strftime("%M"))
 	c.execute("SELECT * FROM dailyDatabase WHERE time = " + curTime)
-	if (curHours >= 8 and curMinutes % 5 == 0 and curHours <= 16):
+	if (mode == 0 and curMinutes % 5 == 0):
 		newXStroke = c.fetchone()[0]
 		newYStroke = c.fetchone()[1]
 		if (curXStroke < newXStroke):
@@ -129,39 +140,39 @@ while(mode == 0):
 # Solar Tracking
 
 # Check back later
-#  [tl, tr, bl, br] = read_photodiodes()
+[tl, tr, bl, br] = analogToDig.read_photodiodes()
 # actuator on front and right of device.
 # set time to actuate for solar tracking
-# t = .10
-# if (tl > bl) and (tl > br) and (tr > bl) and (tr > br):
-# 	move(1, 'fwd', t)
-# if (bl > tl) and (bl > tr) and (br > tl) and (br > tr):
-# 	move(1, 'rev', t)
+t = .10
+if (tl > bl) and (tl > br) and (tr > bl) and (tr > br):
+	move(1, 'fwd', t)
+if (bl > tl) and (bl > tr) and (br > tl) and (br > tr):
+	move(1, 'rev', t)
 
-# if (tr > tl) and (tr > bl) and (br > tl) and (br > bl):
-# 	move(2, 'fwd', t)
-# if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl):
-# 	move(2, 'rev', t)
-# # Diagonal Conditions
-# if (tr > tl) and (tr > bl) and (tr > br):
-# 	move(1, 'fwd', t)
-# 	move(2, 'fwd', t)
-# if (tl > tr) and (tl > bl) and (tl > br):
-# 	move(1, 'fwd', t)
-# 	move(2, 'rev', t)
-# if (bl > tr) and (bl > tl) and (bl > br):
-# 	move(1, 'rev', t)
-# 	move(2, 'rev', t)
-# if (br > tl) and (br > tr) and (br > bl):
-# 	move(1, 'rev', t)
-# 	move(2, 'fwd', t)
+if (tr > tl) and (tr > bl) and (br > tl) and (br > bl):
+	move(2, 'fwd', t)
+if (tl > tr) and (tl > br) and (bl > tr) and (bl > tl):
+	move(2, 'rev', t)
+# Diagonal Conditions
+if (tr > tl) and (tr > bl) and (tr > br):
+	move(1, 'fwd', t)
+	move(2, 'fwd', t)
+if (tl > tr) and (tl > bl) and (tl > br):
+	move(1, 'fwd', t)
+	move(2, 'rev', t)
+if (bl > tr) and (bl > tl) and (bl > br):
+	move(1, 'rev', t)
+	move(2, 'rev', t)
+if (br > tl) and (br > tr) and (br > bl):
+	move(1, 'rev', t)
+	move(2, 'fwd', t)
 
 
 
 # Deleting the daily table
 
-c.execute("DROP TABLE dailyDatabase")
+# c.execute("DROP TABLE dailyDatabase")
 
-conn.commit()
+# conn.commit()
 
 conn.close()
