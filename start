@@ -12,17 +12,37 @@ from solarVector import solarVector
 dataClass = Database()
 svClass = solarVector()
 
+# Starting GPIO Values
+GPIO.output(13, GPIO.LOW)
+GPIO.output(15, GPIO.LOW)
+GPIO.output(16, GPIO.LOW)
+GPIO.output(18, GPIO.LOW)
+
 def move(actNum, dir, t):
+# 13, 15, 16,18 pins for gpio use
 	if (actNum == 1):
 		if (dir == 'fwd'):
-			print("X fwd")
+			GPIO.output(13,GPIO.HIGH)
+			time.sleep(t)
+			GPIO.output(13, GPIO.LOW)
+			print( "Actuator 1 " + str(t * 10) + " mm fwd")
 		if (dir == 'rev'):
-			print("X rev")
+			GPIO.output(15,GPIO.HIGH)
+			time.sleep(t)
+			GPIO.output(15, GPIO.LOW)
+			print( "Actuator 1 " + str(t * 10) + " mm rev")
 	if (actNum == 2):
 		if (dir == 'fwd'):
-			print("Y fwd")
+			GPIO.output(16,GPIO.HIGH)
+			time.sleep(t)
+			GPIO.output(16, GPIO.LOW)
+			print( "Actuator 2 " + str(t * 10) + " mm fwd")
 		if(dir == 'rev'):
-			print("Y rev")
+			GPIO.output(18,GPIO.HIGH)
+			time.sleep(t)
+			GPIO.output(18, GPIO.LOW)
+			print( "Actuator 2 " + str(t * 10) + " mm rev")
+
 
 # Values from UI
 
