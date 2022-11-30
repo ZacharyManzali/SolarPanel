@@ -40,7 +40,7 @@ def findAngles(latitude, longitude, date, time, tzn):
   doy = date2day(date)
   hr = int(time[0:2])
   mn = int(time[3:5])
-  sc = int(time[6:8])
+  sc = 0
   year = int(date[6:10])
   lat = degToRad(latitude)
   hour = hr + mn/60 + sc/3600
@@ -63,27 +63,31 @@ def findAngles(latitude, longitude, date, time, tzn):
 
 class solarVector(object):
   def strokeX(self, latitude, longitude, date, time, tzn):
-    angleList = findAngles(latitude, longitude, date, time, tzn)
-    w = 88.9
-    h = 628.5
-    d = 145
-    r = 470
+    lat = int(latitude)
+    lng = int(longitude)
+    angleList = findAngles(lat, lng, date, time, tzn)
+    w = 22.0
+    h = 660.4
+    d = 217.0
+    r = 470.0
     ele = degToRad(angleList[0])
     az = degToRad(angleList[1])
     x = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.cos(az))**2))+((math.sin(ele))**2)))
     z = math.sqrt((d**2)-(x**2))
-    stroke = math.sqrt(((x-(w/2))**2)+((z+h)**2)) - r
+    stroke = math.sqrt(((x-w)**2)+((z+h)**2)) - r
     return stroke
 
   def strokeY(self, latitude, longitude, date, time, tzn):
-    angleList = findAngles(latitude, longitude, date, time, tzn)
-    w = 88.9
-    h = 608.1
-    d = 215
+    lat = float(latitude)
+    lng = float(longitude)
+    angleList = findAngles(lat, lng, date, time, tzn)
+    w = 44.45
+    h = 660.4
+    d = 183
     r = 470
     ele = degToRad(angleList[0])
     az = degToRad(angleList[1])
     y = math.sqrt(((d**2)*((math.sin(ele))**2))/((((math.cos(ele))**2)*((math.sin(az))**2))+((math.sin(ele))**2)))
     z = math.sqrt((d**2)-(y**2))
-    stroke = math.sqrt(((y-(w/2))**2)+((z+h)**2)) - r
+    stroke = math.sqrt(((y-w)**2)+((z+h)**2)) - r
     return stroke
